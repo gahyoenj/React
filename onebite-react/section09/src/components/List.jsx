@@ -40,6 +40,8 @@ const List = ({todos, onUpdate, onDelete}) =>{
     // 콜백함수를 두번쨰 인수로 전달한 deps를 기준으로 메모이제이션 함
     // 따라서 아래 useMemo 이용해서 아무것도 deps로 전달하지 않았을 때에는 첫번째 콜백 함수의 연산
     // 수행과 반환이 최초로 렌더링 되었을 때 한번만 일어나게 됨
+    // 이렇게 하면 한번만 실행되므로 todos가 변화했을 때의 값은 감지하지 못함
+    //  그래서 deps에 todos 추가해주면 됨 => deps 값 변경 되면 콜백함수 다시 실행되므로
     const {totalCount, doneCount, notDoneCount} = useMemo(()=>{
         console.log('getAnalyzedData 호출')
         const totalCount = todos.length;
@@ -51,7 +53,7 @@ const List = ({todos, onUpdate, onDelete}) =>{
             doneCount,
             notDoneCount
         }
-    },[]);
+    },[todos]);
 
     // const {totalCount,doneCount,notDoneCount} = getAnalyzedData();
 

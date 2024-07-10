@@ -1,5 +1,5 @@
 import './App.css'
-import { useState,useRef,useReducer } from 'react';
+import { useState,useRef,useReducer,useCallback } from 'react';
 import Header from './components/Header.jsx';
 import Editor from './components/Editor.jsx';
 import List from './components/List.jsx';
@@ -59,12 +59,20 @@ function App() {
     })
   }
 
-  const onDelete = (targetId) =>{
+  // const onDelete = (targetId) =>{
+  //   dispatch({
+  //     type:"DELETE",
+  //     targetId:targetId
+  //   })
+  // };
+
+  // onDelete가 이제는 useCallback 함수에 의해 마운트 되었을 때만 딱 한번 생성(최적화됨)
+  const onDelete = useCallback((targetId) =>{
     dispatch({
       type:"DELETE",
       targetId:targetId
     })
-  };
+  }, []);
 
   return (
     <div className='App'>

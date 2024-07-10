@@ -1,4 +1,5 @@
-import './TodoItem.css'
+import './TodoItem.css';
+import { memo } from 'react';
 
 const TodoItem = ({id, isDone, content, date, onUpdate, onDelete}) =>{
     const onChangeCheckbox = () =>{
@@ -17,4 +18,6 @@ const TodoItem = ({id, isDone, content, date, onUpdate, onDelete}) =>{
     </div>
 };
 
-export default TodoItem;
+
+
+export default memo(TodoItem);
