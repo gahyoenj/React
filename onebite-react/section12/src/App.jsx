@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Route, Routes,Link, useNavigate } from 'react-router-dom'
 import './App.css'
+import { useReducer,useRef } from 'react';
 import Home from './pages/Home';
 import Diary from './pages/Diary';
 import New from './pages/New';
+import Edit from "./pages/Edit";
 import NotFound from './pages/NotFound';
 import Button from './components/Button';
 import Header from './components/Header';
@@ -13,15 +15,58 @@ import { getEmotionImage } from './util/get-emotion-image';
 // 1. "/" : 모든 일기를 조회하는 Home 페이지
 // 2. "/new" : 새로운 일기를 작성하는 New 페이지
 // 3. "/diary" : 일기를 상세히 조회하는 Diary 페이지
-function App() {
-  const nav = useNavigate();
 
-  const onClickButton =() =>{
-    nav('/new');
-  };
+const mockData = [
+  {
+    id:1,
+    createdDate: new Date().getTime(),
+    emotionId: 1,
+    content: "1번 일기 내용",
+  },
+  {
+    id:2,
+    createdDate: new Date().getTime(),
+    emotionId: 2,
+    content: "2번 일기 내용",
+  }
+];
+
+function reducer(state, action) {
+  switch(action.type){
+    case "CREATE" : 
+    return [action.data,...state];
+  }
+}
+
+function App() {
+  // const nav = useNavigate();
+
+  // const onClickButton =() =>{
+  //   nav('/new');
+  // };
+  const [data, dispatch] = useReducer(reducer, mockData);
+
+  const idRef = useRef(3);
+  // 새로운 일기 추가
+  const onCreate = (createdData, emotionId, content) => {
+    // 새로운 일기를 추가하는 기능
+    dispatch({
+      type:"CREATE",
+      data : {
+        id: idRef.current++,
+        createdData,
+        emotionId,
+        content,
+      },
+    })
+
+  }
+
+
+
   return (
     <>
-      <Header title={'Header'}
+      {/* <Header title={'Header'}
         letfChild={<Button text={'Left'}/>}
         rightChild={<Button text={'Right'}/>}/>
       <Button 
@@ -41,7 +86,7 @@ function App() {
         type={'NEGATIVE'}
         onClick={() =>{
           console.log('123번 버튼 클릭');
-      }}/>
+      }}/> */}
       {/* <div>
         <img src={getEmotionImage(1)} />
         <img src={getEmotionImage(2)} />
@@ -55,10 +100,16 @@ function App() {
         <Link to={"/diary"}>Diary</Link>
       </div> */}
       {/* <button onClick={onClickButton}>New 페이지로 이동</button> */}
+
+
+      <button onClick={() =>{
+        onCreate(new Date().getTime(), 1, "Hello");
+      }}>일기 추가 테스트</button>
       <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/new" element={<New/>}/>
         <Route path="/diary/:id" element={<Diary/>}/>
+        <Route path="/edit/:id" element={<Edit/>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
