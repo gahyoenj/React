@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Route, Routes,Link, useNavigate } from 'react-router-dom'
+import { Route, Routes,Link, useNavigate, createContext } from 'react-router-dom'
 import './App.css'
 import { useReducer,useRef } from 'react';
 import Home from './pages/Home';
@@ -34,9 +34,19 @@ const mockData = [
 function reducer(state, action) {
   switch(action.type){
     case "CREATE" : 
-    return [action.data,...state];
+      return [action.data,...state];
+    case "UPDATE" :
+      return state.map((item)=>String(item.id) === String(action.data.id) ? action.data : item);
+    case "DELETE" :
+      return state.filter((item)=>String(item.id) !== String(action.id));
+    default:
+      return state
   }
 }
+
+const DiaryStateContext = createContext();
+const DiaryDispatchContext = createContext();
+
 
 function App() {
   // const nav = useNavigate();
@@ -58,10 +68,35 @@ function App() {
         emotionId,
         content,
       },
-    })
+    });
 
+  };
+
+  // 기존 일기 수정
+  const onUpdate = (id, createdData, emotionId, content) => {
+    // 기존 일기 수정하는 기능
+    dispatch(
+      {
+        type:"UPDATE",
+        data:{
+          id,
+          createdData,
+          emotionId,
+          content
+        }
+      }
+    );
   }
 
+  // 일기 삭제
+  const onDelete = (id) => {
+    dispatch(
+      {
+        type:"DELETE",
+        id,
+      }
+    );
+  }
 
 
   return (
@@ -105,6 +140,24 @@ function App() {
       <button onClick={() =>{
         onCreate(new Date().getTime(), 1, "Hello");
       }}>일기 추가 테스트</button>
+
+      <button onClick={()=>{
+        onUpdate(1, new Date().getTime(),3, "수정된 일기입니다");
+      }}>
+        일기 수정 테스트
+      </button>
+
+      <button onClick={()=>{
+        onDelete(1);
+      }}>
+        일기 삭제 테스트
+      </button>
+    <DiaryStateContext.provider value={data}>
+      <DiaryDispatchContext.provider value={{
+        onCreate,
+        onUpdate,
+        onDelete,
+      }}>
       <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/new" element={<New/>}/>
@@ -112,6 +165,8 @@ function App() {
         <Route path="/edit/:id" element={<Edit/>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </DiaryDispatchContext.provider>
+      </DiaryStateContext.provider>
     </>
   );
 }
