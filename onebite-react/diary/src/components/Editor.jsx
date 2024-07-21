@@ -1,7 +1,7 @@
 import './Editor.css';
 import EmotionItem from './EmotionItem';
 import Button from './Button';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const emotionList = [
@@ -43,7 +43,8 @@ const getStringedDate = (targetDate) =>{
     return `${year}-${month}-${date}`;
 };
 
-const Editor = ({onSubmit}) =>{
+
+const Editor = ({onSubmit, initData}) =>{
     const [input, setInput] = useState({
         createdDate :new Date(),
         emotionId :3,
@@ -51,6 +52,14 @@ const Editor = ({onSubmit}) =>{
     });
 
     const nav = useNavigate();
+
+    useEffect(()=>{
+        if(initData) {
+            setInput({...initData,
+                createdDate: new Date(Number(initData.createdDate)),
+            })
+        }
+    },[initData]) //initData의 값이 변경 될 때마다 콜백 함수가 실행됨.
 
     const onChangeInput = (event) =>{
         // console.log(event.target.name); //어떤 요소에 입력이 들어온건지
