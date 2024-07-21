@@ -15,7 +15,7 @@ const New = () =>{
     return (
         <div>
             <Header title={"새 일기 쓰기"} 
-            letfChild={<Button 
+            leftChild={<Button 
             onClick={() => nav(-1)}
             text={"< 뒤로가기"} />}/>
             <Editor onSubmit={onSubmit}/>
